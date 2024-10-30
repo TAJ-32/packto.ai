@@ -5,7 +5,7 @@ services:
       dockerfile: Dockerfile
     container_name: packto_web
     ports:
-      - "8010:8000"
+      - "8010:8010"
     environment:
       - DATABASE_URL=REDACTED
       - MISTRAL_API_KEY=REDACTED
