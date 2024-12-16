@@ -49,7 +49,7 @@ if connection:
         llm_type TEXT NOT NULL,
         api_key TEXT,
         base_url TEXT,
-        in_use BOOLEAN
+        in_use BOOLEAN DEFAULT FALSE
     );  
     '''
     execute_query(connection, create_table_query)
@@ -137,6 +137,7 @@ async def welcome(request: Request):
         select_query = "SELECT llm_name FROM llms WHERE in_use = %s;"
         result = fetch_query(connection, select_query, (True,))
         if (result):
+            print("RES", result)
             llm_name = result[0][0]
         else:
             llm_name = "No LLM Selected. Must pick one before Analysis"
@@ -169,10 +170,10 @@ async def llm_setup(
     if connection:
 
         update_query = """
-        UPDATE pcaps
-        SET in_use = %s;
+        UPDATE llms
+        SET in_use = FALSE;
         """
-        execute_query(connection, update_query, (False,))
+        execute_query(connection, update_query)
 
         insert_query = """
         INSERT INTO llms (llm_name, llm_type, api_key, base_url, in_use)
