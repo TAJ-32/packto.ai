@@ -23,7 +23,7 @@
 
     <form action="/llm_setup" method="post">
         <label for="modelSelect">Choose LLM:</label>
-        <select id="modelSelect" name="llm" onchange="handleModel()">
+        <select id="modelSelect" name="llm">
             <option value="Mistral">Mistral</option>
             <option value="OpenAI">OpenAI</option>
             <option value="Anthropic">Anthropic</option>
@@ -31,14 +31,14 @@
         </select>
         
         <!-- API Key Text Box -->
-        <div id="apiKeyInput" style="display: none;">
+        <div id="apiKeyInput">
             <label for="apiKey">Enter API Key:</label>
             <input type="text" id="apiKey" name="api_key">
         </div>
 
-        <div id="urlInput" style="display: none;">
-            <label for="url">Enter Base URL:</label>
-            <input type="text" id="url" name="url">
+        <div id="urlInput">
+            <label for="base_url">Enter Base URL:</label>
+            <input type="text" id="base_url" name="base_url">
         </div>
     
         <button type="submit">Submit LLM</button>

@@ -160,6 +160,9 @@ async def llm_setup(
     base_url: str = Form(None)
     ):
 
+    print("API", api_key)
+    print("BASE", base_url)
+
     llm_type = ""
     if (api_key):
         llm_type = "Cloud"
@@ -182,35 +185,20 @@ async def llm_setup(
         execute_query(connection, insert_query, (llm, llm_type, api_key, base_url, True))
 
     global graph
-    if llm_type == "Local":
-        try:
-            graph = config_graph(llm, api_key, base_url)
-        except:
-            return HTMLResponse(content="""
-            <html>
-            <body>
-                <script>
-                    alert("Error: Unable to implement LangGraph. Please try again.");
-                    window.location.href = "/";
-                </script>
-            </body>
-            </html>
-        """, status_code=400)
+    try:
+        graph = config_graph(llm, api_key, base_url)
+    except:
+        return HTMLResponse(content="""
+        <html>
+        <body>
+            <script>
+                alert("Error: Unable to implement LangGraph. Please try again.");
+                window.location.href = "/";
+            </script>
+        </body>
+        </html>
+    """, status_code=400)
 
-    if llm_type == "Cloud":
-        try:
-            graph = config_graph(llm, api_key, base_url)
-        except:
-            return HTMLResponse(content="""
-            <html>
-            <body>
-                <script>
-                    alert("Error: Unable to implement LangGraph. Please try again.");
-                    window.location.href = "/";
-                </script>
-            </body>
-            </html>
-        """, status_code=400)
 
     return RedirectResponse(url="/", status_code=303)
 
