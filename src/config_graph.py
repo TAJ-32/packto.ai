@@ -93,24 +93,31 @@ def config_graph(model, api_key, base_url):
         external_context: dict
 
     class Assistant:
+        print("ASSISTANT")
         def __init__(self, runnable: Runnable):
+            print("INIT")
             self.runnable = runnable
         def __call__(self, state, config: RunnableConfig):
+                print("CALL")
                 while True:
+                    print("WHILE")
                     configuration = config.get("configurable", {})
                     user_id = configuration.get("user_id", None)
                     state = {**state, "user_info": user_id}
                     result = self.runnable.invoke(state)
+                    print("ANSWERING", result)
                     # Re-prompt if LLM returns an empty response
                     if not result.tool_calls and (
                         not result.content
                         or isinstance(result.content, list)
                         and not result.content[0].get("text")
                     ):
+                        print("NOT CALLS")
                         messages = state["messages"] + [("user", "Respond with a real output.")]
                         state = {**state, "messages": messages}
                     else:
                         break
+                print("MESSAGES RESULT")
                 return {"messages": result}
         
     def handle_tool_error(state) -> dict:

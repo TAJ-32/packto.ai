@@ -14,7 +14,7 @@ def find_protocols(PCAPs: List[str]) -> str:
     protocols = []
     captures = []
 
-    print("PCAPS:", PCAPs)
+    print("PCAPS IN TOOL:", PCAPs)
     # Load the pcapng file
 
     for PCAP in PCAPs:

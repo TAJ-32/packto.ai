@@ -75,7 +75,10 @@ def answer_question(PCAPs, question, graph):
     temp_state = graph.update_state(config, loaded_graph_state)
 
     #actually use the graph which has the LLM with tools bound to it and decision making capabilities to choose the proper tool
-    result = graph.invoke(input, config)
+    try:
+        result = graph.invoke(input, config)
+    except:
+        return "ERROR WITH LLM SETUP"
 
     #result will output a ton of info in a dict. We want to get the answer alone to put in chat history
     answer = result['messages'][-1].content

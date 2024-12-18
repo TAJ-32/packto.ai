@@ -58,7 +58,9 @@ def init_pcap(PCAPs, graph):
         try:
             result = graph.invoke(input, config)
         except:
-            return "INVALID API KEY"
+            return "ERROR WITH LLM SETUP"
+
+        # result = graph.invoke(input, config)
 
         print("DONEZO")
 

@@ -128,19 +128,24 @@ async def welcome(request: Request):
     state.pop('chat_history', None)
     state.pop('session_chat', None)
 
-
     connection = create_connection()
     if connection:
         select_query = "SELECT group_id, group_name FROM pcap_groups;"
         groups = fetch_query(connection, select_query)
 
-        select_query = "SELECT llm_name FROM llms WHERE in_use = %s;"
+        select_query = "SELECT llm_name, api_key, base_url FROM llms WHERE in_use = %s;"
         result = fetch_query(connection, select_query, (True,))
         if (result):
             print("RES", result)
             llm_name = result[0][0]
+            api_key = result[0][1]
+            base_url = result[0][2]
         else:
             llm_name = "No LLM Selected. Must pick one before Analysis"
+
+    global graph
+    if llm_name != "No LLM Selected. Must pick one before Analysis":
+        graph = config_graph(llm_name, api_key, base_url)
 
     groups_dict = []
     for group in groups:
@@ -184,7 +189,6 @@ async def llm_setup(
         """
         execute_query(connection, insert_query, (llm, llm_type, api_key, base_url, True))
 
-    global graph
     try:
         graph = config_graph(llm, api_key, base_url)
     except:
@@ -444,7 +448,7 @@ async def run_analysis(group_id: str):
 
         if result and result[0][0] is None:
             x = init_pcap(files_in_group, graph)
-            if (x == "INVALID API KEY"):
+            if (x == "ERROR WITH LLM SETUP"):
                 return HTMLResponse(content="""
                     <html>
                     <body>
@@ -522,6 +526,17 @@ async def chat_bot(request: Request, group_id: int, current_chat: Dict[str, List
 
         files_in_group = [f"{group}/{filename}" for filename in os.listdir(group)]
         result = answer_question(files_in_group, user_input, graph)
+        if (result == "ERROR WITH LLM SETUP"):
+            return HTMLResponse(content="""
+                <html>
+                <body>
+                    <script>
+                        alert("Error: INVALID API KEY.");
+                        window.location.href = "/";
+                    </script>
+                </body>
+                </html>
+            """, status_code=400)
 
         if 'session_chat' not in state:
             state['session_chat'] = {"chat": []}
