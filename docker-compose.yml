@@ -7,8 +7,7 @@ services:
     ports:
       - "8010:8010"
     environment:
-      - DATABASE_URL=REDACTED
-      - LANGCHAIN_API_KEY=REDACTED
+      - DATABASE_URL=postgresql://postgres:packto@db:5432/packto_db
     depends_on:
       db:
         condition: service_healthy

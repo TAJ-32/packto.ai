@@ -500,7 +500,7 @@ async def run_analysis(group_id: str):
                     <html>
                     <body>
                         <script>
-                            alert("Error: INVALID API KEY.");
+                            alert("Error: ERROR WITH LLM SETUP.");
                             window.location.href = "/";
                         </script>
                     </body>
@@ -578,7 +578,7 @@ async def chat_bot(request: Request, group_id: int, current_chat: Dict[str, List
                 <html>
                 <body>
                     <script>
-                        alert("Error: INVALID API KEY.");
+                        alert("Error: ERROR WITH LLM SETUP.");
                         window.location.href = "/";
                     </script>
                 </body>
