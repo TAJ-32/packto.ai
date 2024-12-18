@@ -1,10 +1,11 @@
 import os, shutil
 from fastapi.responses import HTMLResponse, RedirectResponse
-from fastapi import FastAPI, Form, Query, UploadFile, File, Request
+from fastapi import FastAPI, Form, Query, UploadFile, File, Request, HTTPException
 from fastapi.responses import HTMLResponse, RedirectResponse, FileResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from fastapi.middleware.cors import CORSMiddleware
+import requests
 import uvicorn
 from rag_proto import rag_protocols
 from answer_question import answer_question
@@ -99,6 +100,9 @@ if connection:
     connection.close()
 
 app = FastAPI()
+
+CLIENT_ID = "Ov23lime2LAojRSkDMGt"
+CLIENT_SECRET = "13ab7ca9d4f9a02674d947f9f8d21bd7e5ea2020"
 
 app.add_middleware(
     CORSMiddleware,
@@ -406,6 +410,49 @@ async def delete_pcap(group_id: int, group_path: str, pcap: str):
 
     return RedirectResponse(url=f"/edit_group?group_id={group_id}", status_code=303)
 
+@app.get("/github/callback")
+def github_callback(code: str):
+    # Exchange the code for an access token
+    token_url = "https://github.com/login/oauth/access_token"
+    headers = {"Accept": "application/json"}
+    payload = {
+        "client_id": CLIENT_ID,
+        "client_secret": CLIENT_SECRET,
+        "code": code,
+    }
+    response = requests.post(token_url, headers=headers, data=payload)
+    if response.status_code == 200:
+        access_token = response.json().get("access_token")
+        # Redirect the user after authentication
+        redirect_url = f"/view_issues?access_token={access_token}"  # Pass the token as a query param
+        return RedirectResponse(url=redirect_url)    
+    else:
+        raise HTTPException(status_code=response.status_code, detail="Authentication failed")
+
+@app.get("/view_issues", response_class=HTMLResponse)
+def view_issues(request: Request, access_token: str):
+    url = "https://api.github.com/repos/TAJ-32/packto.ai/issues"
+    headers = {"Authorization": f"Bearer {access_token}"}
+    
+    response = requests.get(url, headers=headers)
+    if response.status_code == 200:
+        issues = response.json()
+        return templates.TemplateResponse("view_issues.html", {"request": request, "issues": issues, "access_token": access_token})
+    else:
+        raise HTTPException(status_code=response.status_code, detail="Failed to fetch issues")
+
+@app.post("/create_issue")
+def create_issue(title: str = Form(...), body: str = Form(...), token: str = Form(...)):
+    print("CREATE ISSUE")
+    url = "https://api.github.com/repos/TAJ-32/packto.ai/issues"
+    headers = {"Authorization": f"Bearer {token}"}
+    payload = {"title": title, "body": body}
+    response = requests.post(url, headers=headers, json=payload)
+    if response.status_code == 201:
+        print("SUCCESSSSSS")
+        return RedirectResponse(url="/", status_code=303)
+    else:
+        raise HTTPException(status_code=response.status_code, detail=response.json())
 
 analysis_result = ""
 

@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GitHub Issues</title>
+    <style>
+        /* Basic styling similar to GitHub's issues page */
+        body {
+            font-family: Arial, sans-serif;
+        }
+        .issue-card {
+            border: 1px solid #ddd;
+            padding: 10px;
+            margin: 10px 0;
+            background: #f9f9f9;
+        }
+        .issue-title {
+            font-weight: bold;
+            font-size: 1.2em;
+        }
+        .issue-body {
+            margin-top: 5px;
+        }
+        .create-issue-form {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1>GitHub Issues</h1>
+
+    <div class="create-issue-form">
+        <h3>Create a New Issue</h3>
+        <form action="/create_issue" method="post">
+            <div id="title_in">
+                <label for="TITLEINPUT">Title</label><br>
+                <input type="text" id="title" name="title" required><br><br>
+            </div>
+            
+            <div id="body_in">
+                <label for="BODYINPUT">Body</label><br>
+                <textarea id="body" rows="4" name="body" required></textarea><br><br>
+            </div>
+
+            <input type="hidden" id="token" name="token" value="{{ access_token }}">
+
+            <button type="submit">Submit Issue</button>
+        </form>
+    </div>
+
+    <!-- <script>
+        document.getElementById("create-issue-form").onsubmit = async function(event) {
+            event.preventDefault();
+            
+            const title = document.getElementById("title").value;
+            const body = document.getElementById("body").value;
+            const token = document.getElementById("access_token").value;
+
+            const response = await fetch("/create_issue", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    title: title,
+                    body: body,
+                    token: token
+                })
+            });
+
+            const result = await response.json();
+            if (response.ok) {
+                alert("Issue created successfully!");
+                location.reload(); // Reload the page to see the new issue
+            } else {
+                alert("Error creating issue: " + result.detail);
+            }
+        };
+    </script> -->
+
+</body>
+</html>

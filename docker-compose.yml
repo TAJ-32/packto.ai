@@ -8,10 +8,6 @@ services:
       - "8010:8010"
     environment:
       - DATABASE_URL=REDACTED
-      - MISTRAL_API_KEY=REDACTED
-      - HF_API_KEY=REDACTED
-      - GOOGLE_API_KEY=REDACTED
-      - OPENAI_API_KEY=REDACTED
       - LANGCHAIN_API_KEY=REDACTED
     depends_on:
       db:
