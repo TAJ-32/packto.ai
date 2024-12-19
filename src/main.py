@@ -567,8 +567,6 @@ async def chat_bot(request: Request, group_id: int, current_chat: Dict[str, List
                 print("resultsss", result)
                 group = result[0][0]
             connection.close()
-            print("CHECK 3")
-        # graph = config_graph(llm_type, api_key)
 
 
         files_in_group = [f"{group}/{filename}" for filename in os.listdir(group)]
